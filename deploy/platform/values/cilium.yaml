@@ -1,0 +1,13 @@
+ipam:
+  mode: kubernetes
+kubeProxyReplacement: false
+operator:
+  replicas: 1
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+    limits: {cpu: 500m, memory: 384Mi}
+resources:
+  requests: {cpu: 100m, memory: 128Mi}
+  limits: {cpu: '1', memory: 512Mi}
+hubble:
+  enabled: false

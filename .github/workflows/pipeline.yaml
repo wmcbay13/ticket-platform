@@ -1,0 +1,128 @@
+name: Build, test and promote
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, feature/gitops-ticket-platform]
+permissions:
+  contents: read
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  checks:
+    name: Application and manifest checks
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16.15-alpine
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: tickets
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d tickets"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      TEST_DATABASE_URL: postgres://postgres:ci-only-password@localhost:5432/tickets?sslmode=disable
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with: {go-version: '1.26.8'}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.8.0'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: go test -race -count=1 ./... && go vet ./...
+      - run: test -z "$(gofmt -l cmd internal)"
+      - run: npm ci --prefix web && npm test --prefix web && npm run build --prefix web && npm audit --prefix web --audit-level=moderate
+      - run: pip install --disable-pip-version-check PyYAML==6.0.3
+      - run: ./scripts/validate.sh
+      - name: Test canary success and failure queries
+        run: ./scripts/test-analysis.sh
+      - name: Validate pinned Helm chart interfaces
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ripgrep
+          ./scripts/tools.sh
+          ./scripts/validate-charts.sh
+      - name: Check generated manifests are committed
+        run: python3 scripts/render-workloads.py && python3 scripts/render-platform.py && python3 scripts/render-dashboard.py && git diff --exit-code -- deploy
+      - name: Schema validation
+        run: |
+          source versions.env
+          curl -fsSL "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" -o /tmp/kubeconform.tar.gz
+          curl -fsSL "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/CHECKSUMS" -o /tmp/kubeconform-checksums
+          cd /tmp
+          awk '$2 == "kubeconform-linux-amd64.tar.gz" {print $1 "  kubeconform.tar.gz"}' kubeconform-checksums | sha256sum --check --strict -
+          tar -xzf kubeconform.tar.gz kubeconform
+          cd "$GITHUB_WORKSPACE"
+          /tmp/kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version "$KUBERNETES_VERSION" .local/rendered-app.yaml
+  images:
+    name: Build and scan images
+    needs: checks
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          load: true
+          tags: ticket-backend:scan
+          build-args: VERSION=${{ github.sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: web
+          load: true
+          tags: ticket-web:scan
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+      - name: Scan final images
+        run: |
+          source versions.env
+          for image in ticket-backend:scan ticket-web:scan; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$HOME/.cache/trivy:/root/.cache/trivy" \
+              "aquasec/trivy:${TRIVY_VERSION}" image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "$image"
+          done
+      - name: Decide whether this source may deploy
+        id: release
+        env:
+          PREVIEW: ${{ vars.PREVIEW_DEPLOY_ENABLED }}
+        run: |
+          deploy=false
+          if [[ "$GITHUB_EVENT_NAME" == push && "$GITHUB_REPOSITORY" == wmcbay13/ticket-platform ]]; then
+            if [[ "$GITHUB_REF_NAME" == main || ( "$GITHUB_REF_NAME" == feature/gitops-ticket-platform && "$PREVIEW" == true ) ]]; then deploy=true; fi
+          fi
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        if: steps.release.outputs.deploy == 'true'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish exactly the scanned images
+        if: steps.release.outputs.deploy == 'true'
+        id: publish
+        run: |
+          for component in backend web; do
+            name="ghcr.io/${GITHUB_REPOSITORY}-${component}"
+            docker tag "ticket-${component}:scan" "$name:$GITHUB_SHA"
+            docker push "$name:$GITHUB_SHA"
+            digest="$(docker inspect "$name:$GITHUB_SHA" --format '{{index .RepoDigests 0}}')"
+            echo "${component}_digest=${digest#*@}" >> "$GITHUB_OUTPUT"
+          done
+      - name: Update GitOps deployment branch
+        if: steps.release.outputs.deploy == 'true'
+        env:
+          BACKEND_DIGEST: ${{ steps.publish.outputs.backend_digest }}
+          WEB_DIGEST: ${{ steps.publish.outputs.web_digest }}
+        run: |
+          pip install --disable-pip-version-check PyYAML==6.0.3
+          ./scripts/promote.sh

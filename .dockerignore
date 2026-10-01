@@ -1,0 +1,10 @@
+.git
+.agents
+.codex
+.aws
+.local
+web/node_modules
+web/dist
+docs
+deploy
+*.log

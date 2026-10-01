@@ -1,8 +1,13 @@
 .local/
+.aws
+.codex
+.agents
 .env
 node_modules/
 dist/
 coverage/
 *.log
 *.test
+*.tsbuildinfo
+__pycache__/
 .DS_Store

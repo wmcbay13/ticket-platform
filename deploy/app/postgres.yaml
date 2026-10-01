@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ticket-postgres
+  annotations:
+    argocd.argoproj.io/sync-wave: '-2'
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ticket-local
+  local:
+    path: /var/local/ticket-platform
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: ticket-platform/storage
+              operator: In
+              values: [postgres]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: ticket-data
+  annotations:
+    argocd.argoproj.io/sync-wave: '-2'
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ticket-local
+  volumeName: ticket-postgres
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: ticket-data
+  annotations:
+    argocd.argoproj.io/sync-wave: '-2'
+spec:
+  selector: {app: postgres}
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: ticket-data
+  annotations:
+    argocd.argoproj.io/sync-wave: '-2'
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres}
+  template:
+    metadata:
+      labels: {app: postgres, project: ticket-platform}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        fsGroup: 999
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: postgres
+          image: postgres:16.15-alpine
+          args: ['-c', 'max_connections=100', '-c', 'shared_buffers=64MB', '-c', 'statement_timeout=10000', '-c', 'idle_in_transaction_session_timeout=10000']
+          ports: [{name: postgres, containerPort: 5432}]
+          env:
+            - {name: POSTGRES_DB, value: tickets}
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef: {name: postgres-auth, key: password}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: '1', memory: 512Mi}
+          startupProbe:
+            exec: {command: ['sh', '-c', 'pg_isready -U postgres -d tickets']}
+            periodSeconds: 2
+            failureThreshold: 60
+          readinessProbe:
+            exec: {command: ['sh', '-c', 'pg_isready -U postgres -d tickets']}
+            periodSeconds: 5
+          livenessProbe:
+            exec: {command: ['sh', '-c', 'pg_isready -U postgres -d tickets']}
+            periodSeconds: 10
+          volumeMounts: [{name: data, mountPath: /var/lib/postgresql/data}]
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: postgres-data}

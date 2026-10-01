@@ -1,0 +1,9 @@
+controller:
+  resources:
+    requests: {cpu: 50m, memory: 64Mi}
+    limits: {cpu: 500m, memory: 256Mi}
+  extraArgs:
+    - --traefik-api-group=traefik.io
+    - --traefik-api-version=traefik.io/v1alpha1
+dashboard:
+  enabled: false

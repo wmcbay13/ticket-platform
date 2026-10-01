@@ -1,0 +1,105 @@
+{
+  "source_commit": "2c261dac81e0985f6a8f5c3f2baf060b85b51152",
+  "rollout_phase": "Healthy",
+  "stable_hash": "78bbdf6778",
+  "pods": [
+    {
+      "name": "booking-78bbdf6778-tgmcc",
+      "service": "booking",
+      "node": "ticket-platform-worker",
+      "ready": true
+    },
+    {
+      "name": "booking-78bbdf6778-wldff",
+      "service": "booking",
+      "node": "ticket-platform-worker2",
+      "ready": true
+    },
+    {
+      "name": "catalog-6f9b48445b-n6bmk",
+      "service": "catalog",
+      "node": "ticket-platform-worker",
+      "ready": true
+    },
+    {
+      "name": "catalog-6f9b48445b-swzhc",
+      "service": "catalog",
+      "node": "ticket-platform-worker2",
+      "ready": true
+    },
+    {
+      "name": "web-779bb97f75-b5n9r",
+      "service": "web",
+      "node": "ticket-platform-worker2",
+      "ready": true
+    },
+    {
+      "name": "web-779bb97f75-dj9jg",
+      "service": "web",
+      "node": "ticket-platform-worker",
+      "ready": true
+    },
+    {
+      "name": "worker-79dfd6bfc9-9kg69",
+      "service": "worker",
+      "node": "ticket-platform-worker",
+      "ready": true
+    },
+    {
+      "name": "worker-79dfd6bfc9-k45ff",
+      "service": "worker",
+      "node": "ticket-platform-worker2",
+      "ready": true
+    }
+  ],
+  "analysis_results": [
+    {
+      "name": "booking-78bbdf6778-8-2",
+      "phase": "Successful",
+      "metrics": [
+        {
+          "name": "latency-p95",
+          "phase": "Successful",
+          "values": [
+            "[0.00475]",
+            "[0.00475]",
+            "[0.00475]"
+          ]
+        },
+        {
+          "name": "success-rate",
+          "phase": "Successful",
+          "values": [
+            "[1]",
+            "[1]",
+            "[1]"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "booking-78bbdf6778-8-5",
+      "phase": "Successful",
+      "metrics": [
+        {
+          "name": "latency-p95",
+          "phase": "Successful",
+          "values": [
+            "[0.00475]",
+            "[0.00475]",
+            "[0.00475]"
+          ]
+        },
+        {
+          "name": "success-rate",
+          "phase": "Successful",
+          "values": [
+            "[1]",
+            "[1]",
+            "[1]"
+          ]
+        }
+      ]
+    }
+  ]
+}

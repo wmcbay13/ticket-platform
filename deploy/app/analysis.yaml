@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: booking-quality
+  namespace: ticket
+spec:
+  args:
+    - name: canary-hash
+  metrics:
+    - name: success-rate
+      interval: 30s
+      count: 3
+      failureLimit: 0
+      successCondition: len(result) == 1 && !isNaN(result[0]) && result[0] >= 0.99
+      failureCondition: len(result) == 1 && !isNaN(result[0]) && result[0] < 0.99
+      provider:
+        prometheus:
+          address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+          query: |
+            ((sum(rate(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}",status!~"5.."}[2m])) or vector(0))
+            / sum(rate(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}"}[2m])))
+            and (sum(increase(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}"}[2m])) >= 100)
+    - name: latency-p95
+      interval: 30s
+      count: 3
+      failureLimit: 0
+      successCondition: len(result) == 1 && !isNaN(result[0]) && result[0] <= 0.5
+      failureCondition: len(result) == 1 && !isNaN(result[0]) && result[0] > 0.5
+      provider:
+        prometheus:
+          address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+          query: |
+            histogram_quantile(0.95, sum by(le) (rate(ticket_http_duration_seconds_bucket{service="booking",rollout_hash="{{args.canary-hash}}"}[2m])))
+            and (sum(increase(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}"}[2m])) >= 100)

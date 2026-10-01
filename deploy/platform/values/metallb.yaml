@@ -1,0 +1,12 @@
+controller:
+  resources:
+    requests: {cpu: 25m, memory: 32Mi}
+    limits: {cpu: 250m, memory: 128Mi}
+frrk8s:
+  enabled: false
+speaker:
+  frr:
+    enabled: false
+  resources:
+    requests: {cpu: 25m, memory: 32Mi}
+    limits: {cpu: 250m, memory: 128Mi}
