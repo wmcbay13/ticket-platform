@@ -17,7 +17,7 @@ spec:
         prometheus:
           address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
           query: |
-            (sum(rate(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}",status!~"5.."}[2m]))
+            ((sum(rate(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}",status!~"5.."}[2m])) or vector(0))
             / sum(rate(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}"}[2m])))
             and (sum(increase(ticket_http_requests_total{service="booking",rollout_hash="{{args.canary-hash}}"}[2m])) >= 100)
     - name: latency-p95

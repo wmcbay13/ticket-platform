@@ -14,8 +14,7 @@ case "$command" in
       "$K6_IMAGE" run --summary-export "/results/$result" "/scripts/$script.js"
     echo "Results: .local/results/$result";;
   failure-pod)
-    before="$(k get pods -n ticket -l app=catalog -o jsonpath='{.items[0].metadata.uid}')"
-    name="$(k get pods -n ticket -l app=catalog -o jsonpath='{.items[0].metadata.name}')"
+    read -r name before < <(k get pods -n ticket -l app=catalog -o jsonpath='{.items[0].metadata.name}{" "}{.items[0].metadata.uid}{"\n"}')
     k delete pod "$name" -n ticket
     k rollout status deployment/catalog -n ticket --timeout=180s
     k get pods -n ticket -l app=catalog -o wide

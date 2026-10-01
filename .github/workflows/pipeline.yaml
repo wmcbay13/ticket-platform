@@ -39,6 +39,8 @@ jobs:
       - run: npm ci --prefix web && npm test --prefix web && npm run build --prefix web && npm audit --prefix web --audit-level=moderate
       - run: pip install --disable-pip-version-check PyYAML==6.0.3
       - run: ./scripts/validate.sh
+      - name: Test canary success and failure queries
+        run: ./scripts/test-analysis.sh
       - name: Validate pinned Helm chart interfaces
         run: |
           sudo apt-get update -qq
