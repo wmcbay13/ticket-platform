@@ -5,4 +5,5 @@ dist/
 coverage/
 *.log
 *.test
+*.tsbuildinfo
 .DS_Store

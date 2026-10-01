@@ -1,0 +1,105 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ticket-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: '1'
+data:
+  ticket-platform.json: "{\n  \"title\": \"Ticket Platform \\u2014 Operations\",\n\
+    \  \"uid\": \"ticket-platform\",\n  \"schemaVersion\": 39,\n  \"version\": 1,\n\
+    \  \"tags\": [\n    \"ticket\",\n    \"devops\"\n  ],\n  \"timezone\": \"browser\"\
+    ,\n  \"refresh\": \"10s\",\n  \"time\": {\n    \"from\": \"now-15m\",\n    \"\
+    to\": \"now\"\n  },\n  \"panels\": [\n    {\n      \"id\": 1,\n      \"title\"\
+    : \"HTTP requests / second\",\n      \"type\": \"timeseries\",\n      \"gridPos\"\
+    : {\n        \"x\": 0,\n        \"y\": 0,\n        \"w\": 12,\n        \"h\":\
+    \ 8\n      },\n      \"datasource\": {\n        \"type\": \"prometheus\",\n  \
+    \      \"uid\": \"prometheus\"\n      },\n      \"targets\": [\n        {\n  \
+    \        \"refId\": \"A\",\n          \"expr\": \"sum by(service) (rate(ticket_http_requests_total[1m]))\"\
+    ,\n          \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"reqps\"\n        },\n        \"overrides\": []\n      }\n\
+    \    },\n    {\n      \"id\": 2,\n      \"title\": \"HTTP p95 latency\",\n   \
+    \   \"type\": \"timeseries\",\n      \"gridPos\": {\n        \"x\": 12,\n    \
+    \    \"y\": 0,\n        \"w\": 12,\n        \"h\": 8\n      },\n      \"datasource\"\
+    : {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n    \
+    \  },\n      \"targets\": [\n        {\n          \"refId\": \"A\",\n        \
+    \  \"expr\": \"histogram_quantile(0.95,sum by(service,le)(rate(ticket_http_duration_seconds_bucket[2m])))\"\
+    ,\n          \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"s\"\n        },\n        \"overrides\": []\n      }\n    },\n\
+    \    {\n      \"id\": 3,\n      \"title\": \"HTTP 5xx fraction\",\n      \"type\"\
+    : \"timeseries\",\n      \"gridPos\": {\n        \"x\": 0,\n        \"y\": 8,\n\
+    \        \"w\": 12,\n        \"h\": 8\n      },\n      \"datasource\": {\n   \
+    \     \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n \
+    \     \"targets\": [\n        {\n          \"refId\": \"A\",\n          \"expr\"\
+    : \"sum by(service)(rate(ticket_http_requests_total{status=~\\\"5..\\\"}[2m]))\
+    \ / sum by(service)(rate(ticket_http_requests_total[2m]))\",\n          \"legendFormat\"\
+    : \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\n        }\n  \
+    \    ],\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\"\
+    : \"percentunit\"\n        },\n        \"overrides\": []\n      }\n    },\n  \
+    \  {\n      \"id\": 4,\n      \"title\": \"Container CPU cores\",\n      \"type\"\
+    : \"timeseries\",\n      \"gridPos\": {\n        \"x\": 12,\n        \"y\": 8,\n\
+    \        \"w\": 12,\n        \"h\": 8\n      },\n      \"datasource\": {\n   \
+    \     \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n \
+    \     \"targets\": [\n        {\n          \"refId\": \"A\",\n          \"expr\"\
+    : \"sum by(pod)(rate(container_cpu_usage_seconds_total{namespace=\\\"ticket\\\"\
+    ,container!=\\\"\\\",container!=\\\"POD\\\"}[1m]))\",\n          \"legendFormat\"\
+    : \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\n        }\n  \
+    \    ],\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\"\
+    : \"cores\"\n        },\n        \"overrides\": []\n      }\n    },\n    {\n \
+    \     \"id\": 5,\n      \"title\": \"Container working set\",\n      \"type\"\
+    : \"timeseries\",\n      \"gridPos\": {\n        \"x\": 0,\n        \"y\": 16,\n\
+    \        \"w\": 12,\n        \"h\": 8\n      },\n      \"datasource\": {\n   \
+    \     \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n \
+    \     \"targets\": [\n        {\n          \"refId\": \"A\",\n          \"expr\"\
+    : \"sum by(pod)(container_memory_working_set_bytes{namespace=\\\"ticket\\\",container!=\\\
+    \"\\\",container!=\\\"POD\\\"})\",\n          \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"bytes\"\n        },\n        \"overrides\": []\n      }\n\
+    \    },\n    {\n      \"id\": 6,\n      \"title\": \"CPU throttling fraction\"\
+    ,\n      \"type\": \"timeseries\",\n      \"gridPos\": {\n        \"x\": 12,\n\
+    \        \"y\": 16,\n        \"w\": 12,\n        \"h\": 8\n      },\n      \"\
+    datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\
+    \n      },\n      \"targets\": [\n        {\n          \"refId\": \"A\",\n   \
+    \       \"expr\": \"sum by(pod)(rate(container_cpu_cfs_throttled_periods_total{namespace=\\\
+    \"ticket\\\"}[1m])) / sum by(pod)(rate(container_cpu_cfs_periods_total{namespace=\\\
+    \"ticket\\\"}[1m]))\",\n          \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"percentunit\"\n        },\n        \"overrides\": []\n   \
+    \   }\n    },\n    {\n      \"id\": 7,\n      \"title\": \"API desired replicas\"\
+    ,\n      \"type\": \"timeseries\",\n      \"gridPos\": {\n        \"x\": 0,\n\
+    \        \"y\": 24,\n        \"w\": 12,\n        \"h\": 8\n      },\n      \"\
+    datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\
+    \n      },\n      \"targets\": [\n        {\n          \"refId\": \"A\",\n   \
+    \       \"expr\": \"kube_horizontalpodautoscaler_status_desired_replicas{namespace=\\\
+    \"ticket\\\"}\",\n          \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"short\"\n        },\n        \"overrides\": []\n      }\n\
+    \    },\n    {\n      \"id\": 8,\n      \"title\": \"Payment backlog\",\n    \
+    \  \"type\": \"timeseries\",\n      \"gridPos\": {\n        \"x\": 12,\n     \
+    \   \"y\": 24,\n        \"w\": 12,\n        \"h\": 8\n      },\n      \"datasource\"\
+    : {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n    \
+    \  },\n      \"targets\": [\n        {\n          \"refId\": \"A\",\n        \
+    \  \"expr\": \"max(ticket_payment_backlog)\",\n          \"legendFormat\": \"\
+    {{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\n        }\n      ],\n\
+    \      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\"\
+    \n        },\n        \"overrides\": []\n      }\n    },\n    {\n      \"id\"\
+    : 9,\n      \"title\": \"Oldest pending payment\",\n      \"type\": \"timeseries\"\
+    ,\n      \"gridPos\": {\n        \"x\": 0,\n        \"y\": 32,\n        \"w\"\
+    : 12,\n        \"h\": 8\n      },\n      \"datasource\": {\n        \"type\":\
+    \ \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"targets\"\
+    : [\n        {\n          \"refId\": \"A\",\n          \"expr\": \"max(ticket_payment_oldest_seconds)\"\
+    ,\n          \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"s\"\n        },\n        \"overrides\": []\n      }\n    },\n\
+    \    {\n      \"id\": 10,\n      \"title\": \"Simulated payment outcomes\",\n\
+    \      \"type\": \"timeseries\",\n      \"gridPos\": {\n        \"x\": 12,\n \
+    \       \"y\": 32,\n        \"w\": 12,\n        \"h\": 8\n      },\n      \"datasource\"\
+    : {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n    \
+    \  },\n      \"targets\": [\n        {\n          \"refId\": \"A\",\n        \
+    \  \"expr\": \"sum by(outcome)(rate(ticket_payments_total[2m]))\",\n         \
+    \ \"legendFormat\": \"{{service}}{{pod}}{{outcome}}{{horizontalpodautoscaler}}\"\
+    \n        }\n      ],\n      \"fieldConfig\": {\n        \"defaults\": {\n   \
+    \       \"unit\": \"ops\"\n        },\n        \"overrides\": []\n      }\n  \
+    \  }\n  ]\n}"

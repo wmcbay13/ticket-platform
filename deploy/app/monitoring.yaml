@@ -1,0 +1,48 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: ticket
+  namespace: ticket
+  labels: {release: monitoring}
+spec:
+  selector:
+    matchLabels: {metrics: ticket}
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      honorLabels: true
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_label_app]
+          targetLabel: service
+        - sourceLabels: [__meta_kubernetes_pod_label_rollouts_pod_template_hash]
+          targetLabel: rollout_hash
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ticket-alerts
+  namespace: ticket
+  labels: {release: monitoring}
+spec:
+  groups:
+    - name: ticket.rules
+      rules:
+        - alert: TicketServiceUnavailable
+          expr: sum by(service) (up{namespace="ticket"}) == 0 or kube_deployment_status_replicas_available{namespace="ticket"} == 0
+          for: 1m
+          labels: {severity: critical}
+          annotations:
+            summary: 'Ticket service has no scrapeable replicas'
+        - alert: TicketHighErrorRate
+          expr: sum by(service) (rate(ticket_http_requests_total{status=~"5.."}[2m])) / sum by(service) (rate(ticket_http_requests_total[2m])) > 0.01
+          for: 2m
+          labels: {severity: warning}
+          annotations:
+            summary: 'Ticket HTTP 5xx responses exceed 1%'
+        - alert: TicketPaymentsStalled
+          expr: max(ticket_payment_oldest_seconds) > 60
+          for: 1m
+          labels: {severity: warning}
+          annotations:
+            summary: 'Payment backlog contains jobs older than one minute'

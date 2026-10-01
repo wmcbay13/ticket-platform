@@ -1,0 +1,39 @@
+deployment:
+  replicas: 2
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+resources:
+  requests: {cpu: 50m, memory: 64Mi}
+  limits: {cpu: 500m, memory: 192Mi}
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: false
+  kubernetesIngress:
+    enabled: false
+service:
+  type: LoadBalancer
+ports:
+  web:
+    port: 8000
+    exposedPort: 80
+  websecure:
+    expose:
+      default: false
+logs:
+  general:
+    level: WARN
+metrics:
+  prometheus:
+    serviceMonitor:
+      enabled: true
+      additionalLabels: {release: monitoring}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchLabels: {app.kubernetes.io/name: traefik}

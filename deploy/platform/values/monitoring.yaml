@@ -1,0 +1,54 @@
+grafana:
+  admin:
+    existingSecret: grafana-admin
+    userKey: username
+    passwordKey: password
+  defaultDashboardsEnabled: true
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+    limits: {cpu: 500m, memory: 384Mi}
+  sidecar:
+    dashboards:
+      searchNamespace: ALL
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests: {cpu: 25m, memory: 32Mi}
+      limits: {cpu: 250m, memory: 128Mi}
+prometheus:
+  prometheusSpec:
+    retention: 12h
+    retentionSize: 1GB
+    scrapeInterval: 30s
+    resources:
+      requests: {cpu: 100m, memory: 384Mi}
+      limits: {cpu: '1', memory: 1536Mi}
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    ruleNamespaceSelector: {}
+    podMonitorNamespaceSelector: {}
+    serviceMonitorNamespaceSelector: {}
+prometheusOperator:
+  resources:
+    requests: {cpu: 50m, memory: 64Mi}
+    limits: {cpu: 500m, memory: 256Mi}
+kube-state-metrics:
+  resources:
+    requests: {cpu: 25m, memory: 32Mi}
+    limits: {cpu: 250m, memory: 128Mi}
+prometheus-node-exporter:
+  resources:
+    requests: {cpu: 25m, memory: 32Mi}
+    limits: {cpu: 250m, memory: 128Mi}
+kubeEtcd: {enabled: false}
+kubeScheduler: {enabled: false}
+kubeControllerManager: {enabled: false}
+kubeProxy: {enabled: false}
+defaultRules:
+  rules:
+    etcd: false
+    kubeSchedulerAlerting: false
+    kubeSchedulerRecording: false
+    kubeControllerManager: false
+    kubeProxy: false

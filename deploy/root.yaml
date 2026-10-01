@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ticket-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/wmcbay13/ticket-platform.git
+    targetRevision: gitops-demo
+    path: deploy/platform/apps
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions: [ServerSideApply=true]

@@ -1,0 +1,35 @@
+apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: booking-traffic
+  namespace: ticket
+spec:
+  weighted:
+    services:
+      - name: booking-stable
+        port: 8080
+      - name: booking-canary
+        port: 8080
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ticket
+  namespace: ticket
+spec:
+  entryPoints: [web]
+  routes:
+    - match: PathPrefix(`/api/events`)
+      kind: Rule
+      priority: 100
+      services: [{name: catalog, port: 8080}]
+    - match: PathPrefix(`/api/orders`)
+      kind: Rule
+      priority: 100
+      services:
+        - name: booking-traffic
+          kind: TraefikService
+    - match: PathPrefix(`/`)
+      kind: Rule
+      priority: 1
+      services: [{name: web, port: 8080}]
