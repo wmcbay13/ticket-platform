@@ -12,7 +12,7 @@ resources:
 images:
 - name: ticket-backend
   newName: ghcr.io/wmcbay13/ticket-platform-backend
-  digest: sha256:5664092b829eca467acc8b1f5096317373b9c206df545334b7efe601cd324edd
+  digest: sha256:382046cb96233a950d96816366aeca7a91fb37c1e19dbe9ae7db924fe341abcd
 - name: ticket-web
   newName: ghcr.io/wmcbay13/ticket-platform-web
   digest: sha256:c7d84474581e1372d121bf01810a1d5b2d4059285b90e7a2b0a9a4fb076755fc
