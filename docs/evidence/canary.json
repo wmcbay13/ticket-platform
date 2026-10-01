@@ -1,0 +1,143 @@
+{
+  "source_commit": "a9ea8f540220f81fda978ea365046646d899ab75",
+  "healthy_rollout": {
+    "phase": "Healthy",
+    "stable_hash": "f66b5466b",
+    "replicas": 2,
+    "analyses": [
+      {
+        "name": "booking-f66b5466b-5-2",
+        "phase": "Successful",
+        "started_at": "2026-10-01T14:12:22Z",
+        "completed_at": "2026-10-01T14:13:22Z",
+        "metrics": [
+          {
+            "name": "success-rate",
+            "phase": "Successful",
+            "measurements": [
+              {
+                "phase": "Successful",
+                "value": "[1]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[1]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[1]"
+              }
+            ]
+          },
+          {
+            "name": "latency-p95",
+            "phase": "Successful",
+            "measurements": [
+              {
+                "phase": "Successful",
+                "value": "[0.00475]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[0.00475]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[0.004750000000000001]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "booking-f66b5466b-5-5",
+        "phase": "Successful",
+        "started_at": "2026-10-01T14:15:22Z",
+        "completed_at": "2026-10-01T14:16:22Z",
+        "metrics": [
+          {
+            "name": "latency-p95",
+            "phase": "Successful",
+            "measurements": [
+              {
+                "phase": "Successful",
+                "value": "[0.00475]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[0.00475]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[0.00475]"
+              }
+            ]
+          },
+          {
+            "name": "success-rate",
+            "phase": "Successful",
+            "measurements": [
+              {
+                "phase": "Successful",
+                "value": "[1]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[1]"
+              },
+              {
+                "phase": "Successful",
+                "value": "[1]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "failed_canary": {
+    "phase": "Degraded",
+    "abort": true,
+    "reason": "RolloutAborted: Rollout aborted update to revision 6: Step-based analysis phase error/failed: Metric \"success-rate\" assessed Failed due to failed (1) > failureLimit (0)",
+    "analysis": {
+      "name": "booking-686446bb99-6-2",
+      "phase": "Failed",
+      "started_at": "2026-10-01T14:20:00Z",
+      "completed_at": "2026-10-01T14:20:00Z",
+      "metrics": [
+        {
+          "name": "latency-p95",
+          "phase": "Successful",
+          "measurements": [
+            {
+              "phase": "Successful",
+              "value": "[0.00475]"
+            }
+          ]
+        },
+        {
+          "name": "success-rate",
+          "phase": "Failed",
+          "measurements": [
+            {
+              "phase": "Failed",
+              "value": "[0]"
+            }
+          ]
+        }
+      ]
+    },
+    "routing": [
+      {
+        "name": "booking-stable",
+        "port": 8080,
+        "weight": 100
+      },
+      {
+        "name": "booking-canary",
+        "port": 8080,
+        "weight": 0
+      }
+    ]
+  }
+}

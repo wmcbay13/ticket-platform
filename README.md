@@ -86,6 +86,7 @@ See the step-by-step [demo runbook](docs/runbook.md).
 | `make smoke` | Success, decline, retry, and duplicate-safe reservations |
 | `make load` | Traffic ramp from 20 to 500 requests/sec; HPA scaling and resource graphs |
 | `make failure-pod` | Kubernetes replaces a catalog pod |
+| `make failure-database-pod` | Restart PostgreSQL and verify order/inventory persistence |
 | `make failure-worker-node` | Stop the stateless worker node, verify recovery, then restore it |
 | `make policy-test` | Authorized database traffic succeeds; unauthorized API/database traffic fails |
 | `make drift-demo` | Argo CD repairs a live CPU-request change |
@@ -95,6 +96,8 @@ See the step-by-step [demo runbook](docs/runbook.md).
 | `make canary-restore` | Restore the canonical booking template after demos |
 
 Load summaries are saved under `.local/results/`. The load scenario checks fewer than 1% failed requests and p95 below 500 ms; these are demo acceptance targets, not hardware-independent capacity claims. See [validation evidence](docs/validation.md) for measured results.
+
+![Measured traffic, HPA replicas, and CPU during the local spike test](docs/evidence/spike.png)
 
 ## Application contract and limitations
 

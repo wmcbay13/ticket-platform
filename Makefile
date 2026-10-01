@@ -1,4 +1,4 @@
-.PHONY: tools test integration build manifests bootstrap status smoke load canary-traffic failure-pod failure-worker-node policy-test drift-demo canary-good canary-fail canary-restore grafana-ui argocd-ui argocd-password teardown
+.PHONY: tools test integration analysis-test build manifests bootstrap status smoke load canary-traffic failure-pod failure-database-pod failure-worker-node policy-test drift-demo canary-good canary-fail canary-restore grafana-ui argocd-ui argocd-password teardown
 tools:
 	./scripts/tools.sh
 test:
@@ -8,6 +8,8 @@ test:
 	npm run build --prefix web
 integration:
 	./scripts/integration.sh
+analysis-test:
+	./scripts/test-analysis.sh
 build:
 	docker build -t ticket-platform-backend:local .
 	docker build -t ticket-platform-web:local web
@@ -28,6 +30,8 @@ canary-traffic:
 	./scripts/demo.sh canary-traffic
 failure-pod:
 	./scripts/demo.sh failure-pod
+failure-database-pod:
+	./scripts/demo.sh failure-database-pod
 failure-worker-node:
 	./scripts/demo.sh failure-worker-node
 policy-test:

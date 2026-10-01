@@ -6,6 +6,7 @@ mkdir -p .local/results
 base="http://$(k get svc traefik -n ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 case "$command" in
   smoke) python3 scripts/smoke.py "$base";;
+  failure-database-pod) python3 scripts/database-recovery.py "$base";;
   load|canary-traffic)
     script=spike; [[ "$command" == canary-traffic ]] && script=canary
     result="${script}-$(date -u +%Y%m%dT%H%M%SZ).json"

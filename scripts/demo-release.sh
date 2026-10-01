@@ -23,6 +23,10 @@ for d in docs:
 path.write_text(yaml.safe_dump_all(docs,sort_keys=False))
 PY
 git -C "$snapshot" add deploy/app/workloads.yaml
+if git -C "$snapshot" diff --cached --quiet; then
+  echo 'The requested booking template is already the desired state.'
+  exit 0
+fi
 git -C "$snapshot" commit -m "demo: $mode booking canary"
 git -C "$snapshot" push origin HEAD:refs/heads/gitops-demo
 echo 'Desired state published. Keep make canary-traffic running during promotion/abort.'

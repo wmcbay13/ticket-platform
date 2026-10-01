@@ -25,7 +25,9 @@ for role in ['catalog', 'booking', 'worker', 'web']:
         'securityContext': {'runAsNonRoot': True, 'seccompProfile': {'type': 'RuntimeDefault'}},
         'tolerations': [{'key': 'node.kubernetes.io/'+condition, 'operator': 'Exists', 'effect': 'NoExecute', 'tolerationSeconds': 30} for condition in ['not-ready','unreachable']],
         'topologySpreadConstraints': [{'maxSkew': 1, 'topologyKey': 'kubernetes.io/hostname',
-                                      'whenUnsatisfiable': 'ScheduleAnyway', 'labelSelector': {'matchLabels': {'app': role}}}],
+                                      'whenUnsatisfiable': 'DoNotSchedule', 'nodeTaintsPolicy': 'Honor',
+                                      'matchLabelKeys': ['rollouts-pod-template-hash' if role == 'booking' else 'pod-template-hash'],
+                                      'labelSelector': {'matchLabels': {'app': role}}}],
         'containers': [container],
     }
     if role == 'web':

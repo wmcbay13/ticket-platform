@@ -18,6 +18,8 @@ The summary JSON is written to `.local/results/`. Record achieved request rate, 
 
 Run `make failure-pod` to replace a catalog pod while another replica serves traffic. Run `make failure-worker-node` to stop `ticket-platform-worker2`, wait for replacements, verify booking behavior, and restore the node automatically. Never use the storage worker for this demo.
 
+Run `make failure-database-pod` to create a confirmed order, restart PostgreSQL, and verify that the order and inventory remain intact. This intentionally causes a brief database outage. Run recovery demos sequentially, after any canary finishes, so an injected outage does not affect release quality analysis.
+
 Run `make policy-test`: a pod with the permitted migration identity can reach PostgreSQL; an unrelated pod cannot reach PostgreSQL or the catalog API. Actual ingress traffic continues through Traefik. Run `make drift-demo` and show Argo CD restoring the catalog's Git-defined CPU request.
 
 ## 4. Progressive release
@@ -34,7 +36,7 @@ kubectl --context kind-ticket-platform -n ticket get rollout booking -w
 kubectl --context kind-ticket-platform -n ticket get analysisruns -w
 ```
 
-The healthy revision progresses through 10%, 50%, and 100% after its quality checks. Use the Rollouts conditions and AnalysisRun metric results as evidence. Without sufficient traffic the release pauses; no-data does not count as success. If an analysis is inconclusive, keep traffic running and retry/promote through the Rollouts UI/CLI after inspecting its measurements; do not bypass failed quality checks.
+The healthy revision progresses through 10%, 50%, and 100% after its quality checks. Use the Rollouts conditions and AnalysisRun metric results as evidence. Without sufficient traffic the release pauses; no-data does not count as success. If an analysis is inconclusive, keep traffic running and retry the analysis through the Rollouts UI/CLI after inspecting its measurements. Do not skip the analysis or bypass failed quality checks.
 
 Then run `make canary-fail` while `make canary-traffic` continues. The canary remains healthy at `/healthz` but deliberately returns 503 for API calls. Prometheus detects the canary's failures and Rollouts aborts to stable routing. Argo CD displays the failed desired revision. `make canary-restore` restores the canonical template through Git; keep traffic running until reconciliation completes.
 

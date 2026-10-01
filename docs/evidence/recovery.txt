@@ -1,0 +1,61 @@
+Catalog pod replacement
+=======================
+pod "catalog-5955c576f4-cb7kz" deleted from ticket namespace
+Waiting for deployment "catalog" rollout to finish: 1 of 2 updated replicas are available...
+deployment "catalog" successfully rolled out
+NAME                       READY   STATUS    RESTARTS   AGE     IP             NODE                      NOMINATED NODE   READINESS GATES
+catalog-5955c576f4-5jhf8   1/1     Running   0          3s      10.244.1.121   ticket-platform-worker    <none>           <none>
+catalog-5955c576f4-hzbr5   1/1     Running   0          9m43s   10.244.2.71    ticket-platform-worker2   <none>           <none>
+success: pending -> confirmed; idempotent replay preserved order
+decline: pending -> failed; idempotent replay preserved order
+retry: pending -> confirmed; idempotent replay preserved order
+Smoke checks passed.
+
+Worker node recovery
+====================
+ticket-platform-worker2
+Waiting for node detection and the application’s 30-second eviction toleration.
+deployment "catalog" successfully rolled out
+deployment "worker" successfully rolled out
+NAME                       READY   STATUS        RESTARTS   AGE   IP             NODE                      NOMINATED NODE   READINESS GATES
+booking-698c758fd5-6qmll   1/1     Running       0          14s   10.244.1.114   ticket-platform-worker    <none>           <none>
+booking-698c758fd5-jksx8   1/1     Terminating   0          21m   10.244.2.66    ticket-platform-worker2   <none>           <none>
+booking-698c758fd5-zlwc7   1/1     Running       0          15m   10.244.1.230   ticket-platform-worker    <none>           <none>
+catalog-5955c576f4-5jhf8   1/1     Running       0          12m   10.244.1.121   ticket-platform-worker    <none>           <none>
+catalog-5955c576f4-hzbr5   1/1     Terminating   0          21m   10.244.2.71    ticket-platform-worker2   <none>           <none>
+catalog-5955c576f4-jzmsq   1/1     Running       0          14s   10.244.1.109   ticket-platform-worker    <none>           <none>
+web-6785767f77-mkwph       1/1     Terminating   0          51m   10.244.2.23    ticket-platform-worker2   <none>           <none>
+web-6785767f77-vx7gv       1/1     Running       0          51m   10.244.1.115   ticket-platform-worker    <none>           <none>
+web-6785767f77-w5vgz       1/1     Running       0          14s   10.244.1.71    ticket-platform-worker    <none>           <none>
+worker-787d6dc495-9wf88    1/1     Running       0          14s   10.244.1.209   ticket-platform-worker    <none>           <none>
+worker-787d6dc495-jcvkd    1/1     Terminating   0          21m   10.244.2.1     ticket-platform-worker2   <none>           <none>
+worker-787d6dc495-k9s4c    1/1     Terminating   0          21m   10.244.2.84    ticket-platform-worker2   <none>           <none>
+worker-787d6dc495-zlncs    1/1     Running       0          14s   10.244.1.184   ticket-platform-worker    <none>           <none>
+success: pending -> confirmed; idempotent replay preserved order
+decline: pending -> failed; idempotent replay preserved order
+retry: pending -> confirmed; idempotent replay preserved order
+Smoke checks passed.
+node/ticket-platform-worker2 condition met
+
+Database pod recovery
+=====================
+pod "postgres-0" deleted from ticket-data namespace
+Waiting for 1 pods to be ready...
+partitioned roll out complete: 1 new pods have been updated...
+PostgreSQL pod restart preserved the confirmed order and inventory.
+
+Network policy probes
+=====================
+pod/ticket-denied created
+pod/ticket-denied condition met
+pod/ticket-allowed created
+pod/ticket-allowed condition met
+command terminated with exit code 1
+wget: download timed out
+command terminated with exit code 1
+Authorized database path works; unauthorized database and API paths are denied.
+
+GitOps drift repair
+===================
+deployment.apps/catalog patched
+Argo CD restored the Git-defined 50m CPU request.
