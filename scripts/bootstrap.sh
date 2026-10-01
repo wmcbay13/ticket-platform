@@ -39,5 +39,10 @@ for attempt in $(seq 1 120); do
 done
 k rollout status deployment/metallb-controller -n metallb-system --timeout=300s
 python3 scripts/metallb-pool.py
-k apply -f .local/metallb-pool.yaml
+pool_ready=false
+for attempt in $(seq 1 30); do
+  if k apply -f .local/metallb-pool.yaml; then pool_ready=true; break; fi
+  sleep 3
+done
+[[ "$pool_ready" == true ]] || { echo 'MetalLB webhook did not become reachable'; exit 1; }
 ./scripts/status.sh

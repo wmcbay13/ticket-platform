@@ -1,4 +1,7 @@
 .local/
+.aws
+.codex
+.agents
 .env
 node_modules/
 dist/

@@ -39,6 +39,10 @@ jobs:
       - run: npm ci --prefix web && npm test --prefix web && npm run build --prefix web && npm audit --prefix web --audit-level=moderate
       - run: pip install --disable-pip-version-check PyYAML==6.0.3
       - run: ./scripts/validate.sh
+      - name: Validate pinned Helm chart interfaces
+        run: |
+          ./scripts/tools.sh
+          ./scripts/validate-charts.sh
       - name: Check generated manifests are committed
         run: python3 scripts/render-workloads.py && python3 scripts/render-platform.py && python3 scripts/render-dashboard.py && git diff --exit-code -- deploy
       - name: Schema validation

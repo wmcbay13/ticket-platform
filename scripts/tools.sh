@@ -27,5 +27,5 @@ if ! command -v helm >/dev/null; then
   install -m 755 ".local/downloads/linux-$arch/helm" .local/bin/helm
 fi
 python3 -c 'import yaml' || { echo 'Install Python PyYAML (6.0.3), for example in a virtualenv, then rerun.'; exit 1; }
-for tool in docker kind kubectl helm go npm python3 curl jq; do command -v "$tool" >/dev/null || { echo "Missing $tool"; exit 1; }; done
+for tool in docker kind kubectl helm go npm python3 curl jq rg; do command -v "$tool" >/dev/null || { echo "Missing $tool"; exit 1; }; done
 echo 'Tools available. Downloads and Helm caches stay under .local/.'

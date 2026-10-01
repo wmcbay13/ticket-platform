@@ -18,4 +18,4 @@ for path in [Path('.local/rendered-app.yaml'),*Path('deploy/platform').rglob('*.
         assert any(d['kind']=='Rollout' for d in documents)
 print('Kustomize rendering and YAML checks passed.')
 PY
-bash -n scripts/*.sh
+for script in scripts/*.sh; do bash -n "$script"; done
