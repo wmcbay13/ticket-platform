@@ -41,6 +41,8 @@ jobs:
       - run: ./scripts/validate.sh
       - name: Validate pinned Helm chart interfaces
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ripgrep
           ./scripts/tools.sh
           ./scripts/validate-charts.sh
       - name: Check generated manifests are committed
