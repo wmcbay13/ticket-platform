@@ -29,7 +29,7 @@ k apply --server-side --force-conflicts -f .local/argocd.yaml
 k rollout status deployment/argocd-server -n argocd --timeout=300s
 k apply -f deploy/app/namespaces.yaml
 k create namespace monitoring --dry-run=client -o yaml | k apply -f -
-python3 scripts/secrets.py
+python3 scripts/generate-secrets.py
 k apply -f .local/secrets.yaml
 k apply -f deploy/root.yaml
 echo 'Waiting for Argo CD to install MetalLB (gitops-demo must have a published deployment snapshot).'

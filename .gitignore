@@ -6,4 +6,5 @@ coverage/
 *.log
 *.test
 *.tsbuildinfo
+__pycache__/
 .DS_Store

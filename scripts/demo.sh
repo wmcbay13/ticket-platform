@@ -27,7 +27,7 @@ case "$command" in
     trap restore EXIT
     docker stop "$node"
     echo 'Waiting for node detection and the application’s 30-second eviction toleration.'
-    sleep 90
+    for interval in 1 2 3; do sleep 30; done
     k rollout status deployment/catalog -n ticket --timeout=180s
     k rollout status deployment/worker -n ticket --timeout=180s
     k get pods -n ticket -o wide

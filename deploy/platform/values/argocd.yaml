@@ -1,7 +1,8 @@
 fullnameOverride: argocd
 dex: {enabled: false}
 notifications: {enabled: false}
-applicationSet: {enabled: false}
+applicationSet:
+  replicas: 0
 configs:
   params:
     server.insecure: true
