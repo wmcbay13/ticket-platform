@@ -52,6 +52,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
@@ -93,7 +94,7 @@ spec:
               name: app-auth
               key: catalog_url
         - name: APP_VERSION
-          value: fa82b72cd032aae301878ce172aed21270d349fd
+          value: f719478dafb540e65d33f343076bfc699f65d772
         - name: DB_MAX_CONNS
           value: '5'
 ---
@@ -227,6 +228,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
@@ -268,7 +270,7 @@ spec:
               name: app-auth
               key: booking_url
         - name: APP_VERSION
-          value: fa82b72cd032aae301878ce172aed21270d349fd
+          value: f719478dafb540e65d33f343076bfc699f65d772
         - name: DB_MAX_CONNS
           value: '5'
 ---
@@ -392,6 +394,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
@@ -433,7 +436,7 @@ spec:
               name: app-auth
               key: worker_url
         - name: APP_VERSION
-          value: fa82b72cd032aae301878ce172aed21270d349fd
+          value: f719478dafb540e65d33f343076bfc699f65d772
         - name: DB_MAX_CONNS
           value: '5'
 ---
@@ -517,6 +520,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
