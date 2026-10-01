@@ -45,4 +45,6 @@ for attempt in $(seq 1 30); do
   sleep 3
 done
 [[ "$pool_ready" == true ]] || { echo 'MetalLB webhook did not become reachable'; exit 1; }
+k wait --for=jsonpath='{.status.sync.status}'=Synced application/ticket-platform -n argocd --timeout=600s
+k wait --for=jsonpath='{.status.health.status}'=Healthy application/ticket-platform -n argocd --timeout=600s
 ./scripts/status.sh

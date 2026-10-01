@@ -52,6 +52,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
@@ -227,6 +228,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
@@ -392,6 +394,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m
@@ -517,6 +520,7 @@ spec:
         ports:
         - name: http
           containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             cpu: 50m

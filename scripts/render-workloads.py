@@ -11,7 +11,7 @@ for role in ['catalog', 'booking', 'worker', 'web']:
         pod_labels['metrics'] = 'ticket'
     container = {
         'name': role, 'image': 'ticket-web' if role == 'web' else 'ticket-backend',
-        'ports': [{'name': 'http', 'containerPort': 8080}],
+        'ports': [{'name': 'http', 'containerPort': 8080, 'protocol': 'TCP'}],
         'resources': {'requests': {'cpu': '50m', 'memory': '64Mi'}, 'limits': {'cpu': '500m', 'memory': '128Mi'}},
         'securityContext': {'runAsNonRoot': True, 'runAsUser': 101 if role == 'web' else 65532,
                             'allowPrivilegeEscalation': False, 'readOnlyRootFilesystem': True,

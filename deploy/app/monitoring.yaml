@@ -14,8 +14,10 @@ spec:
       honorLabels: true
       relabelings:
         - sourceLabels: [__meta_kubernetes_pod_label_app]
+          action: replace
           targetLabel: service
         - sourceLabels: [__meta_kubernetes_pod_label_rollouts_pod_template_hash]
+          action: replace
           targetLabel: rollout_hash
 ---
 apiVersion: monitoring.coreos.com/v1
