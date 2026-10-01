@@ -93,7 +93,7 @@ spec:
               name: app-auth
               key: catalog_url
         - name: APP_VERSION
-          value: b8fb2d3d4375a354a8fb961672481d12f834c5f2
+          value: fa82b72cd032aae301878ce172aed21270d349fd
         - name: DB_MAX_CONNS
           value: '5'
 ---
@@ -268,7 +268,7 @@ spec:
               name: app-auth
               key: booking_url
         - name: APP_VERSION
-          value: b8fb2d3d4375a354a8fb961672481d12f834c5f2
+          value: fa82b72cd032aae301878ce172aed21270d349fd
         - name: DB_MAX_CONNS
           value: '5'
 ---
@@ -433,7 +433,7 @@ spec:
               name: app-auth
               key: worker_url
         - name: APP_VERSION
-          value: b8fb2d3d4375a354a8fb961672481d12f834c5f2
+          value: fa82b72cd032aae301878ce172aed21270d349fd
         - name: DB_MAX_CONNS
           value: '5'
 ---

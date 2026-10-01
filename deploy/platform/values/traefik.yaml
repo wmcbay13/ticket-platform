@@ -21,9 +21,8 @@ ports:
   websecure:
     expose:
       default: false
-logs:
-  general:
-    level: WARN
+log:
+  level: WARN
 metrics:
   prometheus:
     serviceMonitor:

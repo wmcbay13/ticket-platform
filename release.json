@@ -1,6 +1,6 @@
 {
-  "source_commit": "b8fb2d3d4375a354a8fb961672481d12f834c5f2",
+  "source_commit": "fa82b72cd032aae301878ce172aed21270d349fd",
   "source_branch": "feature/gitops-ticket-platform",
-  "backend": "sha256:52369ca485f71afe580132ca4a126aa213ff53f5e3a168853bbc356952bbfc79",
+  "backend": "sha256:559ecfee2601964a3774d7d49a54af67b3e4f3cd7898b635684313b67c348aa7",
   "web": "sha256:c7d84474581e1372d121bf01810a1d5b2d4059285b90e7a2b0a9a4fb076755fc"
 }
