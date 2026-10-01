@@ -270,9 +270,11 @@ spec:
               name: app-auth
               key: booking_url
         - name: APP_VERSION
-          value: f719478dafb540e65d33f343076bfc699f65d772
+          value: f719478dafb540e65d33f343076bfc699f65d772-demo-fail-1790862693
         - name: DB_MAX_CONNS
           value: '5'
+        - name: DEMO_FAIL
+          value: 'true'
 ---
 apiVersion: v1
 kind: Service
