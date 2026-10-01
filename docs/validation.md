@@ -13,11 +13,15 @@ Measured on October 1, 2026, on a Linux host with 8 logical CPUs and 16 GB RAM. 
 
 The integration suite uses an isolated, disposable PostgreSQL container. It does not run against the demo's persistent database.
 
-The deployed application/controller fixes passed [the source pipeline](https://github.com/wmcbay13/ticket-platform/actions/runs/36873586086) and [PR checks](https://github.com/wmcbay13/ticket-platform/actions/runs/36873590523). The deployment snapshot records source commit `a9ea8f540220f81fda978ea365046646d899ab75`; later feature commits add evidence and demo tooling with preview promotion disabled. See the PR for checks on its final commit.
+The final placement configuration passed [the source pipeline](https://github.com/wmcbay13/ticket-platform/actions/runs/36878395401) and [PR checks](https://github.com/wmcbay13/ticket-platform/actions/runs/36878398288). The final deployment snapshot records source commit `2c261da`; later feature commits add documentation/evidence with preview promotion disabled. See the PR for checks on its final commit.
 
 ## Live application and infrastructure
 
 The three kind nodes were Ready. Cilium, Argo CD, MetalLB, Metrics Server, kube-prometheus-stack, Argo Rollouts, Traefik, and the ticket application reconciled successfully. Backend pods were scraped by Prometheus, container CPU metrics were present, and Grafana's API reported the provisioned **Ticket Platform — Operations** dashboard.
+
+After the final scheduling rollout, each application workload had one replica on each worker. Spreading is scoped to the revision hash, so older pods do not distort placement. The worker-node recovery check was repeated with this configuration; replacements could still run on the surviving worker. [Recorded placement and rollout results](evidence/placement.json).
+
+After restoring the node, demo cleanup replaced one pod per workload to return to balanced placement. Existing survivor pods would otherwise remain in place until their next rollout or replacement.
 
 External requests went through the MetalLB address and Traefik. Automated smoke checks verified pending → confirmed, pending → failed, and retry → confirmed. Replaying each reservation's idempotency key returned the original order. Final smoke checks passed again after recovery tests.
 

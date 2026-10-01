@@ -31,7 +31,7 @@ Four application workloads share a Go module and a PostgreSQL database. The back
 Requirements: Linux with Docker Engine access, approximately 8 GB available RAM, Go 1.26+, Node 24+, Python 3 with PyYAML 6.0.3, `curl`, `jq`, and `rg`. `make tools` installs missing kind, kubectl, and Helm binaries under `.local/bin`; it never changes system packages. All infrastructure versions are pinned in [versions.env](versions.env).
 
 ```bash
-git clone https://github.com/wmcbay13/ticket-platform.git
+git clone --branch feature/gitops-ticket-platform https://github.com/wmcbay13/ticket-platform.git
 cd ticket-platform
 npm ci --prefix web
 make tools
@@ -41,6 +41,8 @@ make bootstrap
 make status
 make smoke
 ```
+
+The checkout above uses the implementation branch while [PR #1](https://github.com/wmcbay13/ticket-platform/pull/1) is under review. Use `main` after the initial PR is merged.
 
 The repository must have a published `gitops-demo` branch and publicly pullable GHCR packages before bootstrap can finish. The release workflow creates the branch after its checks pass. First-time maintainers must enable **public** visibility for the backend and web packages in GitHub package settings; a public repository does not automatically make GHCR images public.
 

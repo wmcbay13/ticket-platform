@@ -11,26 +11,25 @@ decline: pending -> failed; idempotent replay preserved order
 retry: pending -> confirmed; idempotent replay preserved order
 Smoke checks passed.
 
-Worker node recovery
-====================
+Worker node recovery with final spread constraints
+==================================================
 ticket-platform-worker2
 Waiting for node detection and the application’s 30-second eviction toleration.
 deployment "catalog" successfully rolled out
 deployment "worker" successfully rolled out
 NAME                       READY   STATUS        RESTARTS   AGE   IP             NODE                      NOMINATED NODE   READINESS GATES
-booking-698c758fd5-6qmll   1/1     Running       0          14s   10.244.1.114   ticket-platform-worker    <none>           <none>
-booking-698c758fd5-jksx8   1/1     Terminating   0          21m   10.244.2.66    ticket-platform-worker2   <none>           <none>
-booking-698c758fd5-zlwc7   1/1     Running       0          15m   10.244.1.230   ticket-platform-worker    <none>           <none>
-catalog-5955c576f4-5jhf8   1/1     Running       0          12m   10.244.1.121   ticket-platform-worker    <none>           <none>
-catalog-5955c576f4-hzbr5   1/1     Terminating   0          21m   10.244.2.71    ticket-platform-worker2   <none>           <none>
-catalog-5955c576f4-jzmsq   1/1     Running       0          14s   10.244.1.109   ticket-platform-worker    <none>           <none>
-web-6785767f77-mkwph       1/1     Terminating   0          51m   10.244.2.23    ticket-platform-worker2   <none>           <none>
-web-6785767f77-vx7gv       1/1     Running       0          51m   10.244.1.115   ticket-platform-worker    <none>           <none>
-web-6785767f77-w5vgz       1/1     Running       0          14s   10.244.1.71    ticket-platform-worker    <none>           <none>
-worker-787d6dc495-9wf88    1/1     Running       0          14s   10.244.1.209   ticket-platform-worker    <none>           <none>
-worker-787d6dc495-jcvkd    1/1     Terminating   0          21m   10.244.2.1     ticket-platform-worker2   <none>           <none>
-worker-787d6dc495-k9s4c    1/1     Terminating   0          21m   10.244.2.84    ticket-platform-worker2   <none>           <none>
-worker-787d6dc495-zlncs    1/1     Running       0          14s   10.244.1.184   ticket-platform-worker    <none>           <none>
+booking-78bbdf6778-ckggz   1/1     Running       0          10s   10.244.1.188   ticket-platform-worker    <none>           <none>
+booking-78bbdf6778-tgmcc   1/1     Running       0          28m   10.244.1.100   ticket-platform-worker    <none>           <none>
+booking-78bbdf6778-wldff   1/1     Terminating   0          35m   10.244.2.94    ticket-platform-worker2   <none>           <none>
+catalog-6f9b48445b-hnjqp   1/1     Running       0          10s   10.244.1.218   ticket-platform-worker    <none>           <none>
+catalog-6f9b48445b-n6bmk   1/1     Running       0          35m   10.244.1.93    ticket-platform-worker    <none>           <none>
+catalog-6f9b48445b-swzhc   1/1     Terminating   0          35m   10.244.2.208   ticket-platform-worker2   <none>           <none>
+web-779bb97f75-b5n9r       1/1     Terminating   0          35m   10.244.2.9     ticket-platform-worker2   <none>           <none>
+web-779bb97f75-dj9jg       1/1     Running       0          34m   10.244.1.177   ticket-platform-worker    <none>           <none>
+web-779bb97f75-wp46p       1/1     Running       0          10s   10.244.1.180   ticket-platform-worker    <none>           <none>
+worker-79dfd6bfc9-9kg69    1/1     Running       0          35m   10.244.1.221   ticket-platform-worker    <none>           <none>
+worker-79dfd6bfc9-k45ff    1/1     Terminating   0          35m   10.244.2.17    ticket-platform-worker2   <none>           <none>
+worker-79dfd6bfc9-whmkc    1/1     Running       0          10s   10.244.1.226   ticket-platform-worker    <none>           <none>
 success: pending -> confirmed; idempotent replay preserved order
 decline: pending -> failed; idempotent replay preserved order
 retry: pending -> confirmed; idempotent replay preserved order
