@@ -47,8 +47,6 @@ make smoke
 
 Reactivate the virtual environment with `source .local/venv/bin/activate` when running commands from a new terminal.
 
-The repository must have a published `gitops-demo` branch and publicly pullable GHCR packages before bootstrap can finish. The release workflow creates the branch after its checks pass. First-time maintainers must enable **public** visibility for the backend and web packages in GitHub package settings; a public repository does not automatically make GHCR images public.
-
 Bootstrap creates `ticket-platform` with one control-plane and two workers. It installs Cilium and Argo CD from the same pinned values that Argo CD subsequently manages, creates local credentials, and applies the root Argo application. Argo CD installs the remaining components. Bootstrap then configures a MetalLB address pool from the actual Docker subnet. The pool, credentials, kubeconfig, caches, and PostgreSQL data live under ignored `.local/`.
 
 Open the application URL printed by `make status`. The MetalLB IP is reachable from the Linux host. No public DNS or internet-facing listener is configured.
